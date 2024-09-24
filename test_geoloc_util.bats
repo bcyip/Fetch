@@ -58,6 +58,14 @@ teardown(){
   [[ "$output" == *"Longitude: -104.9717"* ]]
 }
 
+@test "valid two word cities and states" {
+  run bash ./geoloc-util.sh --locations "Santa Fe, New Mexico"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Location: Santa Fe, New Mexico, US"* ]]
+  [[ "$output" == *"Latitude: 35.6876096"* ]]
+  [[ "$output" == *"Longitude: -105.938456"* ]]
+}
+
 @test "2 city-state locations" {
   run bash ./geoloc-util.sh --locations "Chicago, IL" "Denver, CO"
   [ "$status" -eq 0 ]
@@ -127,7 +135,56 @@ teardown(){
   [ "$status" -eq 1 ]
   [[ "$output" == "-i is an Invalid Option" ]]
 }
-#
+
+@test "Not connected to internet" {
+  skip
+  # need to simulate disconnected internet
+}
+
+@test "No arguments with long option" {
+  run bash ./geoloc-util.sh --locations
+  [ "$status" -eq 1 ]
+  [ "$output" = "Usage: geoloc-util.sh [OPTIONS] \"City, State\" \"ZipCode\" ...
+
+This script fetches geolocation data from the OpenWeather API based on city/state names or zip codes.
+
+Options:
+  -h, --help          Display this help message and exit.
+  -l, --locations     Output the geolocation from geocoding API
+
+Arguments:
+  -l \"City, State\"    Specify one or more locations in the format \"City, State\".
+                      Examples: \"Denver, CO\", \"New York, NY\"
+  -l \"zipcode\"
+
+Examples:
+  geoloc-util.sh --locations \"Denver, CO\"
+  geoloc-util.sh --locations \"80218\"
+  geoloc-util.sh --locations \"Denver, CO\" \"80218\"" ]
+}
+
+@test "No arguments with short option" {
+  run bash ./geoloc-util.sh -l
+  [ "$status" -eq 1 ]
+  [ "$output" = "Usage: geoloc-util.sh [OPTIONS] \"City, State\" \"ZipCode\" ...
+
+This script fetches geolocation data from the OpenWeather API based on city/state names or zip codes.
+
+Options:
+  -h, --help          Display this help message and exit.
+  -l, --locations     Output the geolocation from geocoding API
+
+Arguments:
+  -l \"City, State\"    Specify one or more locations in the format \"City, State\".
+                      Examples: \"Denver, CO\", \"New York, NY\"
+  -l \"zipcode\"
+
+Examples:
+  geoloc-util.sh --locations \"Denver, CO\"
+  geoloc-util.sh --locations \"80218\"
+  geoloc-util.sh --locations \"Denver, CO\" \"80218\"" ]
+}
+
 @test "No arguments provided" {
   run bash ./geoloc-util.sh
   [ "$status" -eq 1 ]

@@ -145,6 +145,11 @@ case $option in
       # shift only if option was specified
       shift
     fi
+    if [[ $# -eq 0 ]]; then
+      # no arguments after accounting for options
+      help_message
+      exit 1
+    fi
     # Process each argument
     for location in "$@"; do
       if [[ $location =~ ^[0-9]{5}$ ]]; then
